@@ -46,6 +46,7 @@ public class DrawContainer
     /// <param name="depth">线的深度</param>
     public void NewLine(int depth)
     {
+        if (depth < 1) { Debug.LogError("Depth must >= 1"); return; }
         m_1_Depth = 1.0f/depth;
         if (mLineStack.Peek() == mVertexList.size) return; //当前已经是一根新线
         mLineStack.Push(mVertexList.size);
@@ -62,19 +63,22 @@ public class DrawContainer
         Vector3 pos = UICamera.lastEventPosition;
         
         if (mLastPoint == pos) return;
+        Vector3 lineDir = GetRightLineDirection(mLastPoint, pos);
         mLastPoint = pos;
-
         
-        Debug.Log(pos);
 
-        pos = UICamera.currentCamera.ScreenToViewportPoint(pos);
+        Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(pos + lineDir * 0.5f * mWidth);
+        Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(pos - lineDir * 0.5f * mWidth);
+        pos1 *= 2;pos1 -= Vector3.one; pos1.y = -pos1.y;
+        pos2 *= 2;pos2 -= Vector3.one; pos2.y = -pos2.y;
 
-        pos.z = m_1_Depth;
-        Debug.Log(pos);
-        Vector3 lineDir = GetRightLineDirection(pos);
+        pos1.z = m_1_Depth;
+        pos2.z = m_1_Depth;
 
-        mVertexList.Add(pos + lineDir * 0.5f * mWidth);
-        mVertexList.Add(pos - lineDir * 0.5f * mWidth);
+        Debug.LogFormat("pos={0},pos1={1},pos2={2}",pos, pos1, pos2);
+        mVertexList.Add(pos1);
+        mVertexList.Add(pos2);
+
         mColorList.Add(Color.green);
         mColorList.Add(Color.green);
         Add2Triangles();
@@ -97,8 +101,8 @@ public class DrawContainer
     {
         int size = mVertexList.size;
         if (size < 4) {  return; }
-        
-        
+        if (mLineStack.Contains(size - 2)) return;
+
         mTriangles.Add(size - 2);
         mTriangles.Add(size - 4);
         mTriangles.Add(size - 3);
@@ -129,14 +133,13 @@ public class DrawContainer
     /// </summary>
     /// <param name="rpos"></param>
     /// <returns></returns>
-    private Vector3 GetRightLineDirection(Vector3 rpos)
+    private Vector3 GetRightLineDirection(Vector3 from, Vector3 rpos)
     {
-        if (mLineStack.Peek() >= mVertexList.size)
+        if (from == null || from == rpos)
         {
             return Vector3.one;
         }
-        Vector3 lastPos = 0.5f * (mVertexList[mVertexList.size - 1] + mVertexList[mVertexList.size - 2]);
-        Vector3 lineDir = (rpos - lastPos);
+        Vector3 lineDir = (rpos - from);
         Vector3 penDir = Vector3.Cross(lineDir, new Vector3(0, 0, 1));
 
         return Vector3.Normalize(penDir);

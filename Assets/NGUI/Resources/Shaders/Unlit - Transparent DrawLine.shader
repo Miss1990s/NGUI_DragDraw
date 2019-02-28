@@ -25,7 +25,7 @@ Shader "Unlit/Transparent DrawLine"
 			ZWrite Off
 			Offset -1, -1
 			Fog { Mode Off }
-			ZTest Off
+			ZTest LEqual
 			ZClip Off
 			//ColorMask RGB
 			Blend SrcAlpha OneMinusSrcAlpha
