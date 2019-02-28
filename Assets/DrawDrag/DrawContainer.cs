@@ -16,8 +16,9 @@ public class DrawContainer
 
     float m_1_Depth;//当前线的深度值
     int mWidth = 2;//当前线的宽度；
-    Color mColor;//当前颜色;
-    Vector3 mLastPoint;//上一个点
+    Color mColor = Color.green;//当前颜色;
+    Vector3 mLastPoint = -1 * Vector3.one;;//上一个点
+    Vector3 mLastPirpendicular;//上一个垂线
 
     
 
@@ -48,6 +49,7 @@ public class DrawContainer
     {
         if (depth < 1) { Debug.LogError("Depth must >= 1"); return; }
         m_1_Depth = 1.0f/depth;
+        mLastPoint = -1 * Vector3.one;
         if (mLineStack.Peek() == mVertexList.size) return; //当前已经是一根新线
         mLineStack.Push(mVertexList.size);
         Debug.LogError("NewLine " + mLineStack.Count);
@@ -63,25 +65,28 @@ public class DrawContainer
         Vector3 pos = UICamera.lastEventPosition;
         
         if (mLastPoint == pos) return;
-        Vector3 lineDir = GetRightLineDirection(mLastPoint, pos);
-        mLastPoint = pos;
+        if (mLastPoint == -1 * Vector3.one;)
+        {
+            mLastPoint = pos;
+            return;
+        }
+        Vector3 lineDir = pos - mLastPoint;
+        Vector3 pirpendicular = GetPirpendicular(lineDir);
+        //Add the first group of triangles for current line.
+        if(mLineStack.Peek() == mVertexList.size)
+        {
+            Add2Vertices(mLastPoint, pirpendicular);
+        }
+        else if(IsBigTurnAngle(lineDir, mLastPirpendicular))//Check the turn angle, adds more vertices for big angle.
+        {
+            Add2Vertices(mLastPoint + lineDir * mWidth, pirpendicular);
+        }
         
+        mLastPoint = pos;
+        mLastPirpendicular = pirpendicular;
 
-        Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(pos + lineDir * 0.5f * mWidth);
-        Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(pos - lineDir * 0.5f * mWidth);
-        pos1 *= 2;pos1 -= Vector3.one; pos1.y = -pos1.y;
-        pos2 *= 2;pos2 -= Vector3.one; pos2.y = -pos2.y;
+        Add2Vertices(pos, pirpendicular);
 
-        pos1.z = m_1_Depth;
-        pos2.z = m_1_Depth;
-
-        Debug.LogFormat("pos={0},pos1={1},pos2={2}",pos, pos1, pos2);
-        mVertexList.Add(pos1);
-        mVertexList.Add(pos2);
-
-        mColorList.Add(Color.green);
-        mColorList.Add(Color.green);
-        Add2Triangles();
         RenderLines();
     }
 
@@ -97,6 +102,24 @@ public class DrawContainer
         RenderLines();
     }
 
+    private void Add2Vertices(Vector3 screenPos, Vector3 perpendicular)
+    {
+        Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(screenPos + perpendicular * 0.5f * mWidth);
+        Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(screenPos - perpendicular * 0.5f * mWidth);
+        pos1 *= 2;pos1 -= Vector3.one; pos1.y = -pos1.y;
+        pos2 *= 2;pos2 -= Vector3.one; pos2.y = -pos2.y;
+
+        pos1.z = m_1_Depth;
+        pos2.z = m_1_Depth;
+
+        //Debug.LogFormat("pos={0},pos1={1},pos2={2}",pos, pos1, pos2);
+        mVertexList.Add(pos1);
+        mVertexList.Add(pos2);
+
+        mColorList.Add(mColor);
+        mColorList.Add(mColor);
+        Add2Triangles();
+    }
     private void Add2Triangles()
     {
         int size = mVertexList.size;
@@ -131,18 +154,32 @@ public class DrawContainer
     /// <summary>
     /// 根据当前采样点和前一个采样点计算线方向的平面归一化垂线
     /// </summary>
-    /// <param name="rpos"></param>
+    /// <param name="lineDir"></param>
     /// <returns></returns>
-    private Vector3 GetRightLineDirection(Vector3 from, Vector3 rpos)
+    private Vector3 GetPirpendicular(Vector3 lineDir)
     {
-        if (from == null || from == rpos)
+        
+        Vector3 pirpendir = Vector3.Cross(lineDir, new Vector3(0, 0, 1));
+        return Vector3.Normalize(pirpendir);
+    }
+    /// <summary>
+    /// 根据线段走向和前一个垂线方向夹角是否太小
+    /// </summary>
+    /// <param name="lineDir">线段走向</param>
+    /// <param name="pirpendir">前一个垂线方向</param>
+    /// <returns></returns>
+    private Vector3 IsBigTurnAngle(Vector3 lineDir, Vector3 pirpendir)
+    {
+        float angle = Math.Abs(Vector3.Angle(lineDir, pirpendir));
+        if(angle < PIE / 4 )
         {
-            return Vector3.one;
+            return true ;
         }
-        Vector3 lineDir = (rpos - from);
-        Vector3 penDir = Vector3.Cross(lineDir, new Vector3(0, 0, 1));
-
-        return Vector3.Normalize(penDir);
+        else if(angle > 3*PIE/4)
+        {
+            return true;
+        }
+        return false;
     }
 }
 
