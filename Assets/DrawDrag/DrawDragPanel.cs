@@ -5,7 +5,8 @@ using UnityEngine;
 public class DrawDragPanel : MonoBehaviour {
     DragContainer mDragContainer;
     DrawContainer mDrawContainer;
-    
+
+    public int depth = 1;
     void Awake()
     {
         mDrawContainer = new DrawContainer(gameObject);
@@ -17,14 +18,14 @@ public class DrawDragPanel : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+
+    }
 
     void OnDragStart()
     {
 
         
-        mDrawContainer.NewLine(2);
+        mDrawContainer.NewLine(depth++);
     }
     void OnDrag()
     {
