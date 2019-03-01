@@ -15,7 +15,7 @@ public class DrawContainer
     MeshRenderer mRender;
 
     float m_1_Depth;//当前线的深度值
-    int mWidth = 2;//当前线的宽度；
+    int mWidth = 10;//当前线的宽度；
     Color mColor = Color.green;//当前颜色;
     Vector3 mLastPoint = -1 * Vector3.one;//上一个点
     Vector3 mLastVert1, mLastVert2;
@@ -83,10 +83,16 @@ public class DrawContainer
             Add2Vertices(mLastPoint, pirpendicular);
         }
         
+        if(Vector3.Angle(pirpendicular,mLastPirpendicular)<2)
+        {
+            Revise2Vertices(pos, pirpendicular);
+        }
+        else
+        {
+            Add2Vertices(pos, pirpendicular);
+        }
         mLastPoint = pos;
         mLastPirpendicular = pirpendicular;
-
-        Add2Vertices(pos, pirpendicular);
 
         RenderLines();
     }
@@ -103,10 +109,10 @@ public class DrawContainer
         RenderLines();
     }
 
-    private void Add2Vertices(Vector3 screenPos, Vector3 perpendicular)
+    private void Add2Vertices(Vector3 screenPos, Vector3 pirpendicular)
     {
-        mLastVert1 = screenPos + perpendicular * 0.5f * mWidth;
-        mLastVert2 = screenPos - perpendicular * 0.5f * mWidth;
+        mLastVert1 = screenPos + pirpendicular * 0.5f * mWidth;
+        mLastVert2 = screenPos - pirpendicular * 0.5f * mWidth;
         Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(mLastVert1);
         Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(mLastVert2);
         pos1 *= 2;pos1 -= Vector3.one; pos1.y = -pos1.y;
@@ -123,6 +129,24 @@ public class DrawContainer
         mColorList.Add(mColor);
         Add2Triangles();
     }
+    private void Revise2Vertices(Vector3 screenPos, Vector3 pirpendicular)
+    {
+        mLastVert1 = screenPos + pirpendicular * 0.5f * mWidth;
+        mLastVert2 = screenPos - pirpendicular * 0.5f * mWidth;
+        Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(mLastVert1);
+        Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(mLastVert2);
+        pos1 *= 2; pos1 -= Vector3.one; pos1.y = -pos1.y;
+        pos2 *= 2; pos2 -= Vector3.one; pos2.y = -pos2.y;
+
+        pos1.z = m_1_Depth;
+        pos2.z = m_1_Depth;
+
+        //Debug.LogFormat("pos={0},pos1={1},pos2={2}",pos, pos1, pos2);
+        mVertexList[mVertexList.size - 2] = pos1;
+        mVertexList[mVertexList.size - 1] = pos2;
+
+    }
+
     private void Add2Triangles()
     {
         int size = mVertexList.size;
