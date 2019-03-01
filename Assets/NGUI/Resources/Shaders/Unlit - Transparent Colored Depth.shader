@@ -49,7 +49,12 @@ Shader "Unlit/Transparent Colored Depth"
 				half2 texcoord : TEXCOORD0;
 				fixed4 color : COLOR;
 			};
-	
+	        struct fragOut
+			{
+				half4 color : SV_Target ;
+				float depth : SV_Depth ;
+			};
+
 			v2f o;
 
 			v2f vert (appdata_t v)
@@ -69,9 +74,16 @@ Shader "Unlit/Transparent Colored Depth"
 				return o;
 			}
 				
-			fixed4 frag (v2f IN) : SV_Target
+			fragOut frag (v2f IN)
 			{//
-				return tex2D(_MainTex, IN.texcoord) * IN.color;
+				fragOut o;
+				fixed4 texColor = tex2D(_MainTex, IN.texcoord);
+				clip(texColor.a-0.9);
+				o.color = texColor * IN.color;
+				
+				o.depth = o.color.a * IN.vertex.z;
+				//o.color.rgb = IN.vertex.zzz;
+				return o;
 			}
 			ENDCG
 		}

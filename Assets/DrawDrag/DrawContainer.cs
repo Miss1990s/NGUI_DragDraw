@@ -52,7 +52,7 @@ public class DrawContainer
     public void NewLine(int depth)
     {
         if (depth < 1) { Debug.LogError("Depth must >= 1"); return; }
-        m_1_Depth = 1.0f/depth;
+        m_1_Depth = 1.0f - 1.0f/depth;
         mLastPoint = -1 * Vector3.one;
         if (mLineStack.Peek() == mVertexList.size) return; //当前已经是一根新线
         mLineStack.Push(mVertexList.size);
@@ -86,7 +86,7 @@ public class DrawContainer
             Add2Vertices(mLastPoint, pirpendicular);
         }
         
-        if(Vector3.Angle(pirpendicular,mLastPirpendicular)<2)
+        if(Vector3.Angle(pirpendicular,mLastPirpendicular)<0)
         {
             Revise2Vertices(pos, pirpendicular);
         }

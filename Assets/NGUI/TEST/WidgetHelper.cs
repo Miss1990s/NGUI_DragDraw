@@ -8,7 +8,10 @@ public class WidgetHelper : MonoBehaviour {
     void Start () {
         UIWidget[] ws = GetComponentsInChildren<UIWidget>();
         for (int i = 0; i < ws.Length; i++)
-            ws[i].depth = i + 1;
+        {
+            ws[i].depth = i % 5 + 1;
+        }
+            
 	}
 	
 	// Update is called once per frame
