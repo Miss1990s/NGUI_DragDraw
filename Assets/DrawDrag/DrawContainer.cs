@@ -24,7 +24,7 @@ public class DrawContainer
 
     
 
-    public DrawContainer(GameObject go , int maxLineCount = 100, int maxVertexCount = 10000)
+    public DrawContainer(GameObject go , UIPanel panel, int maxLineCount = 100, int maxVertexCount = 10000)
     {
         mMesh = new Mesh();
         mMesh.hideFlags = HideFlags.DontSave;
@@ -42,6 +42,8 @@ public class DrawContainer
         mLineStack.Push(0);
         Shader shader = Shader.Find("Unlit/Transparent DrawLine");
         mRender.material = new Material(shader);
+        mRender.sortingOrder = panel.sortingOrder + 1;
+        mRender.material.renderQueue = 3000;
     }
     /// <summary>
     /// 添加新线

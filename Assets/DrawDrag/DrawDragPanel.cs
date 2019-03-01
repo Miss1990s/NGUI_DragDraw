@@ -5,11 +5,12 @@ using UnityEngine;
 public class DrawDragPanel : MonoBehaviour {
     DragContainer mDragContainer;
     DrawContainer mDrawContainer;
+    public UIPanel panel;
 
     public int depth = 1;
     void Awake()
     {
-        mDrawContainer = new DrawContainer(gameObject);
+        mDrawContainer = new DrawContainer(gameObject, panel);
     }    
 	// Use this for initialization
 	void Start () {
