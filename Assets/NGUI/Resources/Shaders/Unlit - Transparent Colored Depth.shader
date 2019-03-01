@@ -63,15 +63,15 @@ Shader "Unlit/Transparent Colored Depth"
 				o.vertex = mul(mvp, v.vertex);
 				o.texcoord = v.texcoord;
 				o.color = v.color;
-				o.color.rgb = o.vertex.zzz;
-				o.color.a = 1.0f;
+				// o.color.rgb = o.vertex.zzz;
+				// o.color.a = 1.0f;
 				
 				return o;
 			}
 				
 			fixed4 frag (v2f IN) : SV_Target
-			{//tex2D(_MainTex, IN.texcoord) *
-				return  IN.color;
+			{//
+				return tex2D(_MainTex, IN.texcoord) * IN.color;
 			}
 			ENDCG
 		}
