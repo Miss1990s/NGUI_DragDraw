@@ -22,7 +22,7 @@ Shader "Unlit/Transparent Colored Depth"
 		{
 			Cull Off
 			Lighting Off
-			ZWrite Off
+			ZWrite On
 			ZTest Off
 			Fog { Mode Off }
 			Offset -1, -1
@@ -54,46 +54,27 @@ Shader "Unlit/Transparent Colored Depth"
 
 			v2f vert (appdata_t v)
 			{
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				float4x4 mvp = UNITY_MATRIX_MVP;
+				mvp[2][0] = 0.0;
+				mvp[2][1] = 0.0;
+				mvp[2][2] = 1.0;
+				mvp[2][3] = 0.0;
+				
+				o.vertex = mul(mvp, v.vertex);
 				o.texcoord = v.texcoord;
 				o.color = v.color;
+				o.color.rgb = o.vertex.zzz;
+				o.color.a = 1.0f;
+				
 				return o;
 			}
 				
 			fixed4 frag (v2f IN) : SV_Target
-			{
-				return tex2D(_MainTex, IN.texcoord) * IN.color;
+			{//tex2D(_MainTex, IN.texcoord) *
+				return  IN.color;
 			}
 			ENDCG
 		}
 	}
 
-	SubShader
-	{
-		LOD 100
-
-		Tags
-		{
-			"Queue" = "Transparent"
-			"IgnoreProjector" = "True"
-			"RenderType" = "Transparent"
-		}
-		
-		Pass
-		{
-			Cull Off
-			Lighting Off
-			ZWrite Off
-			Fog { Mode Off }
-			Offset -1, -1
-			//ColorMask RGB
-			Blend SrcAlpha OneMinusSrcAlpha
-			ColorMaterial AmbientAndDiffuse
-			
-			SetTexture [_MainTex]
-			{
-				Combine Texture * Primary
-			}
-		}
-	}
 }

@@ -15,7 +15,7 @@ public class DrawContainer
     MeshRenderer mRender;
 
     float m_1_Depth;//当前线的深度值
-    int mWidth = 10;//当前线的宽度；
+    int mWidth = 2;//当前线的宽度；
     Color mColor = Color.green;//当前颜色;
 
     Vector3 mLastPoint = -1 * Vector3.one;//上一个点

@@ -60,8 +60,7 @@ Shader "Unlit/Transparent DrawLine"
 				//o.worldPos = v.vertex.xy * _ClipRange0.zw + _ClipRange0.xy;
 				return o;
 			}
-
-
+			
 			half4 frag (v2f IN) : SV_Target
 			{
 				// Softness factor
