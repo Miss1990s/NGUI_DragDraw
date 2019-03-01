@@ -22,6 +22,8 @@ public class DrawDragPanel : MonoBehaviour {
 
     void OnDragStart()
     {
+
+        
         mDrawContainer.NewLine(2);
     }
     void OnDrag()

@@ -17,7 +17,8 @@ public class DrawContainer
     float m_1_Depth;//当前线的深度值
     int mWidth = 2;//当前线的宽度；
     Color mColor = Color.green;//当前颜色;
-    Vector3 mLastPoint = -1 * Vector3.one;;//上一个点
+    Vector3 mLastPoint = -1 * Vector3.one;//上一个点
+    Vector3 mLastVert1, mLastVert2;
     Vector3 mLastPirpendicular;//上一个垂线
 
     
@@ -65,7 +66,7 @@ public class DrawContainer
         Vector3 pos = UICamera.lastEventPosition;
         
         if (mLastPoint == pos) return;
-        if (mLastPoint == -1 * Vector3.one;)
+        if (mLastPoint == -1 * Vector3.one)
         {
             mLastPoint = pos;
             return;
@@ -79,7 +80,7 @@ public class DrawContainer
         }
         else if(IsBigTurnAngle(lineDir, mLastPirpendicular))//Check the turn angle, adds more vertices for big angle.
         {
-            Add2Vertices(mLastPoint + lineDir * mWidth, pirpendicular);
+            Add2Vertices(mLastPoint, pirpendicular);
         }
         
         mLastPoint = pos;
@@ -104,8 +105,10 @@ public class DrawContainer
 
     private void Add2Vertices(Vector3 screenPos, Vector3 perpendicular)
     {
-        Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(screenPos + perpendicular * 0.5f * mWidth);
-        Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(screenPos - perpendicular * 0.5f * mWidth);
+        mLastVert1 = screenPos + perpendicular * 0.5f * mWidth;
+        mLastVert2 = screenPos - perpendicular * 0.5f * mWidth;
+        Vector3 pos1 = UICamera.currentCamera.ScreenToViewportPoint(mLastVert1);
+        Vector3 pos2 = UICamera.currentCamera.ScreenToViewportPoint(mLastVert2);
         pos1 *= 2;pos1 -= Vector3.one; pos1.y = -pos1.y;
         pos2 *= 2;pos2 -= Vector3.one; pos2.y = -pos2.y;
 
@@ -168,14 +171,14 @@ public class DrawContainer
     /// <param name="lineDir">线段走向</param>
     /// <param name="pirpendir">前一个垂线方向</param>
     /// <returns></returns>
-    private Vector3 IsBigTurnAngle(Vector3 lineDir, Vector3 pirpendir)
+    private bool IsBigTurnAngle(Vector3 lineDir, Vector3 pirpendir)
     {
         float angle = Math.Abs(Vector3.Angle(lineDir, pirpendir));
-        if(angle < PIE / 4 )
+        if(angle < 45 )
         {
             return true ;
         }
-        else if(angle > 3*PIE/4)
+        else if(angle > 135)
         {
             return true;
         }
