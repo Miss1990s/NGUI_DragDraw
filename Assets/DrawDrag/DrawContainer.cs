@@ -22,9 +22,11 @@ public class DrawContainer
     Vector3 mLastVert1, mLastVert2;
     Vector3 mLastPirpendicular;//上一个垂线
 
+    //裁剪范围
+    Vector4 mClipRange;
     
 
-    public DrawContainer(GameObject go , UIPanel panel, int maxLineCount = 100, int maxVertexCount = 10000)
+    public DrawContainer(GameObject go , UIPanel panel,Camera uiCamera, int maxLineCount = 100, int maxVertexCount = 10000)
     {
         mMesh = new Mesh();
         mMesh.hideFlags = HideFlags.DontSave;
@@ -33,6 +35,14 @@ public class DrawContainer
 
         mFilter = go.AddMissingComponent<MeshFilter>();
         mRender = go.AddMissingComponent<MeshRenderer>();
+
+        UIWidget w = go.GetComponent<UIWidget>();
+        Vector3 clipCenter = uiCamera.WorldToScreenPoint(w.transform.position);
+        Vector3 clipSize = w.localSize;
+        mClipRange.x = clipCenter.x;
+        mClipRange.y = clipCenter.y;
+        mClipRange.z = clipSize.x* 0.5f;
+        mClipRange.w = clipSize.y * 0.5f;
 
         mVertexList = new BetterList<Vector3>();
         mColorList = new BetterList<Color>();
@@ -44,6 +54,9 @@ public class DrawContainer
         mRender.material = new Material(shader);
         mRender.sortingOrder = panel.sortingOrder - 1;
         mRender.material.renderQueue = 3000;
+
+        int shaerClipRange = Shader.PropertyToID("_ClipRange0");
+        mRender.material.SetVector(shaerClipRange, mClipRange);
 
         //mColor.a = 0.2f;
     }

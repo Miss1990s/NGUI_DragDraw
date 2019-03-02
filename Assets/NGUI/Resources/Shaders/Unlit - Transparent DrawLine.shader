@@ -36,7 +36,7 @@ Shader "Unlit/Transparent DrawLine"
 
 			#include "UnityCG.cginc"
 
-			// float4 _ClipRange0 = float4(0.0, 0.0, 1.0, 1.0);
+			float4 _ClipRange0 = float4(0.0, 0.0, 1.0, 1.0);
 			// float2 _ClipArgs0 = float2(1000.0, 1000.0);
 
 			struct appdata_t
@@ -57,17 +57,17 @@ Shader "Unlit/Transparent DrawLine"
 			{
 				o.vertex = v.vertex;
 				o.color = v.color;
-				//o.worldPos = v.vertex.xy * _ClipRange0.zw + _ClipRange0.xy;
 				return o;
 			}
 			
 			half4 frag (v2f IN) : SV_Target
 			{
-				// Softness factor
-				//float2 factor = (float2(1.0, 1.0) - abs(IN.worldPos)) * _ClipArgs0;
-			
+				float2 factor = _ClipRange0.zw - abs(IN.vertex.xy - _ClipRange0.xy);
+				clip(factor.x);
+				clip(factor.y);
 				half4 col = IN.color;
-				//col.a = 1.0;
+				
+				//col.rgb = IN.vertex.xxx;
 				return col;
 			}
 			ENDCG

@@ -2118,6 +2118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 464956619}
+  uicamera: {fileID: 1679634392}
   depth: 1
 --- !u!65 &1770468737
 BoxCollider:
@@ -2129,7 +2130,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 848, y: 477, z: 0}
+  m_Size: {x: 600, y: 200, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1770468738
 MonoBehaviour:
@@ -2161,13 +2162,13 @@ MonoBehaviour:
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 848
-  mHeight: 477
+  mWidth: 600
+  mHeight: 200
   mDepth: 1
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.7777778
+  aspectRatio: 3
 --- !u!1 &1795465464
 GameObject:
   m_ObjectHideFlags: 0
