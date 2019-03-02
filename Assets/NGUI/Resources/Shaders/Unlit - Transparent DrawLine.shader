@@ -22,10 +22,10 @@ Shader "Unlit/Transparent DrawLine"
 		{
 			Cull Off
 			Lighting Off
-			ZWrite Off
+			ZWrite On
 			Offset -1, -1
 			Fog { Mode Off }
-			ZTest Less
+			ZTest Off
 			ZClip Off
 			//ColorMask RGB
 			Blend SrcAlpha OneMinusSrcAlpha
@@ -67,7 +67,7 @@ Shader "Unlit/Transparent DrawLine"
 				//float2 factor = (float2(1.0, 1.0) - abs(IN.worldPos)) * _ClipArgs0;
 			
 				half4 col = IN.color;
-				col.a = 1.0;
+				//col.a = 1.0;
 				return col;
 			}
 			ENDCG

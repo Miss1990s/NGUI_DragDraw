@@ -22,8 +22,8 @@ Shader "Unlit/Transparent Colored Depth"
 		{
 			Cull Off
 			Lighting Off
-			ZWrite On
-			ZTest Off
+			ZWrite Off
+			ZTest Less
 			Fog { Mode Off }
 			Offset -1, -1
 			Blend SrcAlpha OneMinusSrcAlpha
@@ -81,7 +81,7 @@ Shader "Unlit/Transparent Colored Depth"
 				clip(texColor.a-0.9);
 				o.color = texColor * IN.color;
 				
-				o.depth = o.color.a * IN.vertex.z;
+				o.depth =  IN.vertex.z;
 				//o.color.rgb = IN.vertex.zzz;
 				return o;
 			}
