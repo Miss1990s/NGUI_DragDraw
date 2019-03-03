@@ -205,7 +205,9 @@
     <Compile Include="Assets\NGUI\Scripts\UI\UITexture.cs" />
     <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
     <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
+    <Compile Include="Assets\NGUI\TEST\DragSpriteDepth.cs" />
     <Compile Include="Assets\NGUI\TEST\TestClick.cs" />
+    <Compile Include="Assets\NGUI\TEST\WidgetEditorRoot.cs" />
     <Compile Include="Assets\NGUI\TEST\WidgetHelper.cs" />
     <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
     <None Include="Assets\NGUI\ReadMe - 3.10.0.txt" />
